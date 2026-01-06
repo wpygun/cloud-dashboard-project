@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cloud Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+<div class="container-fluid py-5 px-4">
+    <header class="mb-5 pb-3">
+        <h1 class="fw-bold mb-0">Cloud Dashboard <span class="brand-accent">Project</span></h1>
+        <p class="sub-header-text">REST API Usage & Plotly Visualization</p>
+    </header>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col">
+            <div class="card mb-4 p-3 rounded-4 dashboard-card">
+                <small class="text-uppercase fw-bold card-label">AWS Availability Zones (AZs) by Continent</small>
+                <div id="aws-availability-zones"></div>
+                <small class="text-uppercase fw-bold source-link">Source: <a href="https://aws.amazon.com/about-aws/global-infrastructure/">AWS Global Infrastructure</a></small>
+            </div>
+            <div class="card p-3 rounded-4 dashboard-card">
+                <small class="text-uppercase fw-bold card-label">Number of Data Centers by Company</small>
+                <div id="data-center-numbers-chart"></div>
+                <small class="text-uppercase fw-bold source-link">Source: <a href="https://www.abiresearch.com/blog/data-centers-by-region-size-company">ABI Research 2025</a></small>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card mb-4 p-3 rounded-4 dashboard-card">
+                <small class="text-uppercase fw-bold card-label">Operating System Distribution</small>
+                <div id="os-distribution-chart"></div>
+                <small class="text-uppercase fw-bold source-link">Source: <a href="https://w3techs.com/technologies/overview/operating_system">W3Techs 2025</a></small>
+            </div>
+            <div class="card p-3 rounded-4 dashboard-card">
+                <small class="text-uppercase fw-bold card-label">Global Cloud Market Share</small>
+                <div id="cloud-market-share-chart"></div>
+                <small class="text-uppercase fw-bold source-link">Source: <a href="https://www.crn.com/news/cloud/2025/global-cloud-market-share-q3-2025-aws-lowers-microsoft-and-google-stay-same">CRN Q3 2025</a></small>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card mb-4 p-3 rounded-4 dashboard-card">
+                <small class="text-uppercase fw-bold card-label">Last 20 USD/PLN Exchange Rate</small>
+                <div id="usd-chart"></div>
+                <small class="text-uppercase fw-bold source-link">Source: NBP</small>
+            </div>
+            <div class="card p-3 rounded-4 dashboard-card chf-card">
+                <small class="text-uppercase fw-bold card-label">Last 20 CHF/PLN Exchange Rate</small>
+                <div id="chf-chart"></div>
+                <small class="text-uppercase fw-bold source-link">Source: NBP</small>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+const chartsData = {
+
+    "osDistribution": {
+        // first element os_labels is a list which Jinja takes and converts into JSON
+        // | tojson is a filter that converts python's list into javascript's array
+        labels: {{ os_labels | tojson }},
+        values: {{ os_values | tojson }},
+        divId: "os-distribution-chart",
+        type: "pie"
+    },
+    "cloudMarket": {
+        labels: {{ cms_labels | tojson }},
+        values: {{ cms_values | tojson }},
+        divId: "cloud-market-share-chart",
+        type: "pie"
+    },
+    "awsAvailabilityZones": {
+        labels: {{ aws_labels | tojson }},
+        values: {{ aws_values | tojson }},
+        divId: "aws-availability-zones",
+        type: "bar" },
+    "dataCenterNumbers": {
+        labels: {{ dcn_labels | tojson }},
+        values: {{ dcn_values | tojson }},
+        divId: "data-center-numbers-chart",
+        type: "bar"
+    },
+    "usd": {
+        labels: {{ usd_labels | tojson }},
+        values: {{ usd_values | tojson }},
+        divId: "usd-chart",
+        type: "line"
+    },
+    "chf": {
+        labels: {{ chf_labels | tojson }},
+        values: {{ chf_values | tojson }},
+        divId: "chf-chart",
+        type: "line"
+    }
+};
+</script>
+
+<script src="{{ url_for('static', filename='charts.js') }}"></script>
+</body>
+</html>
+
+<!--
+Bootstrap cheat sheet
+
+container-fluid: makes the dashboard span the full width of the screen
+py-5 px-4:       adds padding on the Y and X axis
+pb-3:            padding bottom
+mb-5:            margin bottom
+fw-bold:         font-weight bold
+rounded-4:       rounded corners
+row-cols-1:      makes everything in one column on mobile
+row-cols-md-3:   makes 3 columns on medium-sized screens
+g-4:             makes space between columns
+-->
