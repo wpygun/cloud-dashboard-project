@@ -5,7 +5,7 @@ import json
 def curl_os_distribution():
     # subprocess module helps to execute the curl command in a terminal
     result = subprocess.run(
-        ["curl", "-s", "http://127.0.0.1:5000/api/os-distribution"],
+        ["curl", "-s", "https://cloud-dashboard-project.onrender.com/api/os-distribution"],
         capture_output = True,  # used to capture output so it can be saved
         text = True             # treats data as a string
     )
@@ -14,7 +14,7 @@ def curl_os_distribution():
 
 def curl_cloud_market_share():
     result = subprocess.run(
-        ["curl", "-s", "http://127.0.0.1:5000/api/cloud-market-share"],
+        ["curl", "-s", "https://cloud-dashboard-project.onrender.com/api/cloud-market-share"],
         capture_output = True,
         text = True
     )
@@ -22,7 +22,7 @@ def curl_cloud_market_share():
 
 def curl_aws_availability_zones():
     result = subprocess.run(
-        ["curl", "-s", "http://127.0.0.1:5000/api/aws-availability-zones"],
+        ["curl", "-s", "https://cloud-dashboard-project.onrender.com/api/aws-availability-zones"],
         capture_output = True,
         text = True
     )
@@ -30,7 +30,7 @@ def curl_aws_availability_zones():
 
 def curl_data_center_numbers():
     result = subprocess.run(
-        ["curl", "-s", "http://127.0.0.1:5000/api/data-center-numbers"],
+        ["curl", "-s", "https://cloud-dashboard-project.onrender.com/api/data-center-numbers"],
         capture_output = True,
         text = True
     )
