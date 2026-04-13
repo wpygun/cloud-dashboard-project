@@ -23,18 +23,21 @@ cd cloud-dashboard-project
  
 2. Install dependencies
 ```bash
-pip install -r requirements.txt
+pip3 install -r requirements.txt
 ```
+
+> Note: use `python` and `pip` instead of `python3` and `pip3` if that's what your system uses.
  
 3. Initialize the database
 ```bash
-python init_db.py
+python3 init_db.py
 ```
  
 4. Run the app
 ```bash
-python app.py
+python3 app.py
 ```
+
 5. Open http://127.0.0.1:5000/dashboard in your browser
 
 ## API endpoints
