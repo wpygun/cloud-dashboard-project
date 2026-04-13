@@ -1,34 +1,34 @@
-from flask import Flask, jsonify, request, render_template
-from curl_helpers import *
+from flask import Flask, jsonify, render_template
+from api_fetcher import get_dashboard_data, get_nbp_data
 import sqlite3
 
 # initialize flask app
 app = Flask(__name__)
 
-# route that used for dislaying the dashboard webpage
+# route that used for displaying the dashboard webpage
 @app.route('/dashboard')
 def dashboard():
-    # gets data from curl functions as a dictionary
-    os_data = curl_os_distribution()
+    # fetches data from a function as a dictionary
+    os_data = get_dashboard_data("os-distribution")
     # split dictionary into labels and values
     os_labels = list(os_data.keys())
     os_values = list(os_data.values())
 
-    cms_data = curl_cloud_market_share()
+    cms_data = get_dashboard_data("cloud-market-share")
     cms_labels = list(cms_data.keys())
     cms_values = list(cms_data.values())
 
-    aws_data = curl_aws_availability_zones()
+    aws_data = get_dashboard_data("aws-availability-zones")
     aws_labels = list(aws_data.keys())
     aws_values = list(aws_data.values())
 
-    dcn_data = curl_data_center_numbers()
+    dcn_data = get_dashboard_data("data-center-numbers")
     dcn_labels = list(dcn_data.keys())
     dcn_values = list(dcn_data.values())
 
-    # gets data from curl functions as a list
-    usd_labels, usd_values = curl_usd_rates()
-    chf_labels, chf_values = curl_chf_rates()
+    # fetches data from a functions as a list
+    usd_labels, usd_values = get_nbp_data("usd")
+    chf_labels, chf_values = get_nbp_data("chf")
 
     # processes the HTML template with Jinja and then returns the data to the browser
     return render_template(
