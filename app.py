@@ -41,67 +41,39 @@ def dashboard():
         chf_labels=chf_labels, chf_values=chf_values
     )
 
+# function that used to query the data from SQLite table
+def query_db_table(table_name):
+    white_list = ["os_distribution", "cloud_market_share", "aws_availability_zones", "data_center_numbers"]
+    if table_name not in white_list:
+        return jsonify({"error": "invalid table name"})
+    with sqlite3.connect('database.db') as connection:
+        cursor = connection.cursor()
+        cursor.execute(f"SELECT * FROM {table_name}")
+        rows = cursor.fetchall()    # fetches all rows from table as a list of tuples
+
+        return dict(rows)   # converts rows into dictionary
+
+# REST API routes that gets data and returns it as JSON key-value object
+
 # OS distribution
-# function that used to get data from SQLite table
-def get_os_distribution():
-    connection = sqlite3.connect('database.db')
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM os_distribution")
-    rows = cursor.fetchall()    # fetch all rows from table as a list of tuples
-    cursor.close()
-    connection.close()
-
-    return dict(rows)   # converts rows into dictionary
-
-# REST API route that gets data and returns it as JSON key-value object
 @app.route('/api/os-distribution', methods=['GET'])
 def os_distribution():
-    return jsonify(get_os_distribution())
+    return jsonify(query_db_table("os_distribution"))
 
 # Cloud market share
-def get_cloud_market_share():
-    connection = sqlite3.connect('database.db')
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM cloud_market_share")
-    rows = cursor.fetchall()
-    cursor.close()
-    connection.close()
-
-    return dict(rows)
-
 @app.route('/api/cloud-market-share', methods=['GET'])
 def cloud_market_share():
-    return jsonify(get_cloud_market_share())
+    return jsonify(query_db_table("cloud_market_share"))
 
 # AWS Availability Zones
-def get_aws_availability_zones():
-    connection = sqlite3.connect('database.db')
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM aws_availability_zones")
-    rows = cursor.fetchall()
-    cursor.close()
-    connection.close()
-
-    return dict(rows)
-
 @app.route('/api/aws-availability-zones', methods=['GET'])
 def aws_availability_zones():
-    return jsonify(get_aws_availability_zones())
+    return jsonify(query_db_table("aws_availability_zones"))
 
 # Number of Data Centers
-def get_data_center_numbers():
-    connection = sqlite3.connect('database.db')
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM data_center_numbers")
-    rows = cursor.fetchall()
-    cursor.close()
-    connection.close()
-
-    return dict(rows)
-
 @app.route('/api/data-center-numbers', methods=['GET'])
 def data_center_numbers():
-    return jsonify(get_data_center_numbers())
+    return jsonify(query_db_table("data_center_numbers"))
 
 
 
