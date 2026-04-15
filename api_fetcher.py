@@ -1,11 +1,16 @@
 import requests
 
-render_url = "https://cloud-dashboard-project.onrender.com/api/"
+env = "prod"  # "local" or "prod"
+base_urls = {
+    "local": "http://127.0.0.1:5000/api/",
+    "prod": "https://cloud-dashboard-project.onrender.com/api/",
+}
+base_url = base_urls[env]
 nbp_url = "http://api.nbp.pl/api/exchangerates/rates/a/"
 
 # function that fetches data from REST API using requests library
 def get_dashboard_data(endpoint):
-    response = requests.get(f"{render_url}{endpoint}")
+    response = requests.get(f"{base_url}{endpoint}")
     # .json() converts JSON into dictionary
     return response.json()
 
