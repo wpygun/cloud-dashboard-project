@@ -218,6 +218,24 @@
     const iconLight = document.getElementById('icon-light');
     const html = document.documentElement;
 
+    toggle.addEventListener('click', () => {
+        html.classList.toggle('dark');
+        const isDark = html.classList.contains('dark');
+        if (isDark) {
+            iconDark.classList.add('hidden');
+            iconLight.classList.remove('hidden');
+        } else {
+            iconDark.classList.remove('hidden');
+            iconLight.classList.add('hidden');
+        }
+        const themeMeta = document.querySelector('meta[name="theme-color"]');
+        if (themeMeta) {
+            themeMeta.setAttribute('content', isDark ? '#101727' : '#ffffff');
+        }
+        if (typeof renderCharts === 'function') {
+            setTimeout(renderCharts, 50);
+        }
+    });
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.js"></script>
