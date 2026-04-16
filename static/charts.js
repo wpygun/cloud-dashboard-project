@@ -1,65 +1,110 @@
+const palette = ['#145eff', '#89919e', '#4fa2fe', '#374151', '#bedaff'];
 
-// palette for the pie charts
-const palette = ['#145eff', '#4fa2fe', '#bedaff', '#c4ddff', '#89919e'];
+function getDynamicLayout(isDarkMode) {
+    return {
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        height: 280,
+        margin: {t: 10, b: 30, l: 40, r: 10},
+        font: {
+            family: 'Inter, ui-sans-serif, system-ui, sans-serif',
+            color: isDarkMode ? '#9ca3af' : '#6b7280'
+        },
+        xaxis: {
+            gridcolor: isDarkMode ? '#374151' : '#f3f4f6',
+            zerolinecolor: isDarkMode ? '#374151' : '#f3f4f6'
+        },
+        yaxis: {
+            gridcolor: isDarkMode ? '#374151' : '#f3f4f6',
+            zerolinecolor: isDarkMode ? '#374151' : '#f3f4f6'
+        }
+    };
+}
 
-// default layout settings for all charts
-const defaultLayout = {
-    paper_bgcolor: 'rgba(0,0,0,0)', // makes background transparent for bar and line charts
-    plot_bgcolor: 'rgba(0,0,0,0)',  // makes background transparent for pie charts
-    height: 350,
-    margin: { t: 20, b: 40, l: 30, r: 10 },
-    font: {
-        family: 'Inter, sans-serif',
-        color: '#eefaf7'
-    },
-    // changes grid lines color from white to darker
-    xaxis: { gridcolor: '#1f2937' },
-    yaxis: { gridcolor: '#1f2937' }
-};
+function renderCharts() {
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    const layout = getDynamicLayout(isDarkMode);
 
-// loop through the data object
-for (const key in chartsData) {
+    for (const key in chartsData) {
+        const data = chartsData[key];
+        let trace;
 
-    const data = chartsData[key];
-    let trace;
+        if (data.type === 'pie') {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            trace = {
+                labels: data.labels,
+                values: data.values,
+                type: 'pie',
+                hole: 0.4,
+                marker: {
+                    colors: palette,
+                    line: {
+                        color: isDarkMode ? '#101727' : '#ffffff',
+                        width: 3
+                    }
+                },
+                textinfo: 'percent',
+                textfont: {color: '#ffffff'}
+            };
+        } else if (data.type === 'bar') {
+            trace = {
+                x: data.labels,
+                y: data.values,
+                type: 'bar',
+                marker: {color: '#145eff', borderRadius: 4}
+            };
+        } else if (data.type === 'line') {
+            trace = {
+                x: data.labels,
+                y: data.values,
+                type: 'scatter',
+                mode: 'lines+markers',
+                line: {
+                    shape: 'spline',
+                    width: 3,
+                    color: key === 'chf' ? '#4fa2fe' : '#145eff'
+                },
+                marker: {size: 6}
+            };
+        }
 
-    if (data.type === 'pie') {
-        trace = {
-            labels: data.labels,
-            values: data.values,
-            type: 'pie',
-            hole: 0.45,
-            marker: { colors: palette }
-        };
+        Plotly.react(data.divId, [trace], layout, {
+            responsive: true,
+            displayModeBar: false
+        });
     }
-    else if (data.type === 'bar') {
-        trace = {
-            x: data.labels,
-            y: data.values,
-            type: 'bar',
-            marker: { color: '#145eff'}
-        };
-    }
-    else if (data.type === 'line') {
-        trace = {
-            x: data.labels,
-            y: data.values,
-            type: 'scatter',
-            mode: 'lines+markers',
-            line: {
-                shape: 'spline',
-                width: 3,
-                color: '#145eff'
-            }
-        };
-        if (key === 'chf') {
-            trace.line.color = '#4fa2fe';
+}
+
+function updateUSDStats() {
+    const values = chartsData.usd.values;
+    const rateEl = document.getElementById('latest-usd-rate');
+    const trendEl = document.getElementById('usd-trend');
+
+    if (values && values.length >= 2) {
+        const current = parseFloat(values[values.length - 1]);
+        const previous = parseFloat(values[values.length - 2]);
+
+        const diff = current - previous;
+        const percentChange = ((diff / previous) * 100).toFixed(2);
+
+        rateEl.textContent = current.toFixed(3);
+
+        if (diff >= 0) {
+            trendEl.textContent = `↑ ${percentChange}%`;
+            trendEl.className = "text-sm font-medium text-green-500";
+        } else {
+            trendEl.textContent = `↓ ${Math.abs(percentChange)}%`;
+            trendEl.className = "text-sm font-medium text-red-500";
         }
     }
+}
 
-    // plot the specific chart
-    Plotly.newPlot(data.divId, [trace], defaultLayout, {
-        responsive: true,
-        displayModeBar: false
+renderCharts();
+updateUSDStats();
+
+const themeToggleBtn = document.getElementById('theme-toggle');
+if (themeToggleBtn) {
+    themeToggleBtn.addEventListener('click', () => {
+        setTimeout(renderCharts, 25);
     });
 }
